@@ -10,12 +10,35 @@ espacio entre palabra y palabra.
 
 """
 import pandas as pd
+import re
 
 
 def ingest_data():
 
-    #
-    # Inserte su código aquí
-    #
+    df = pd.read_fwf(
+            "clusters_report.txt",
+            widths = [8,10,20,100],
+            header = None,
+            names = ["cluster","cantidad_de_palabras_clave","porcentaje_de_palabras_clave", "principales_palabras_clave"],
+            skip_blank_lines = False,
+            converters = {"porcentaje_de_palabras_clave": 
+                lambda x: x.rstrip(" %").replace(",",".")}).drop([0,1,2,3],
+            axis=0
+        )
+
+    principales_palabras_clave = df["principales_palabras_clave"]
+
+    df = df[df["cluster"].notna()]
+    
+    df = df.astype({
+            "cluster": int,
+            "cantidad_de_palabras_clave": int,
+            "porcentaje_de_palabras_clave": float
+        })
+
+    for i, row in df.iterrows():
+        row_formated = row["principales_palabras_clave"]
+        row_formated = re.sub(' +', ' ', row_formated).rstrip(".")
+        df.at[i,'principales_palabras_clave'] = row_formated
 
     return df
