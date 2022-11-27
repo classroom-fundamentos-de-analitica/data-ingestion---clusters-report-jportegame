@@ -34,7 +34,7 @@ def ingest_data():
             row_formated += row["principales_palabras_clave"]+" "
         else:
             row_formated = ", ".join([" ".join(x.split()) for x in row_formated.split(",")])
-            df.at[start,'principales_palabras_clave'] = row_formated
+            df.at[start,'principales_palabras_clave'] = row_formated.rstrip(".")
             row_formated = ""
     
     
