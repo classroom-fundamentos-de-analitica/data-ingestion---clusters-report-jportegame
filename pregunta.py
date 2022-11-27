@@ -25,9 +25,18 @@ def ingest_data():
                 lambda x: x.rstrip(" %").replace(",",".")}).drop([0,1,2,3],
             axis=0
         )
-
-    principales_palabras_clave = df["principales_palabras_clave"]
-
+    row_formated = ""
+    start = 0
+    for i, row in df.iterrows():
+        if(isinstance(row["cluster"], str)):
+            df.at[start,'principales_palabras_clave'] = row_formated
+            row_formated = ""
+            start = i
+            row_formated += row["principales_palabras_clave"]+ " "
+        elif(isinstance(row["principales_palabras_clave"], str)):
+            row_formated += re.sub(' +', ' ', row["principales_palabras_clave"]).rstrip(".")
+    
+    
     df = df[df["cluster"].notna()]
     
     df = df.astype({
@@ -36,9 +45,6 @@ def ingest_data():
             "porcentaje_de_palabras_clave": float
         })
 
-    for i, row in df.iterrows():
-        row_formated = row["principales_palabras_clave"]
-        row_formated = re.sub(' +', ' ', row_formated).rstrip(".")
-        df.at[i,'principales_palabras_clave'] = row_formated
-
     return df
+
+print(ingest_data())
