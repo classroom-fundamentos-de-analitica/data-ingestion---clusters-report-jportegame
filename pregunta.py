@@ -28,13 +28,14 @@ def ingest_data():
     row_formated = ""
     start = 0
     for i, row in df.iterrows():
-        if(isinstance(row["cluster"], str)):
+        if(isinstance(row["cluster"], str)): start = i
+
+        if isinstance(row["principales_palabras_clave"], str): 
+            row_formated += row["principales_palabras_clave"]+" "
+        else:
+            row_formated = ", ".join([" ".join(x.split()) for x in row_formated.split(",")])
             df.at[start,'principales_palabras_clave'] = row_formated
             row_formated = ""
-            start = i
-            row_formated += row["principales_palabras_clave"]+ " "
-        elif(isinstance(row["principales_palabras_clave"], str)):
-            row_formated += re.sub(' +', ' ', row["principales_palabras_clave"]).rstrip(".")
     
     
     df = df[df["cluster"].notna()]
@@ -46,5 +47,3 @@ def ingest_data():
         })
 
     return df
-
-print(ingest_data())
